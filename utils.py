@@ -3,6 +3,9 @@ import torchmetrics
 import numpy as np
 import matplotlib.pyplot as plt
 import torchvision.transforms.functional as F
+from torchmetrics.segmentation import MeanIoU
+import os
+import zipfile
 
 
 def train_step(model: torch.nn.Module,
@@ -97,3 +100,67 @@ def show(imgs):
         img = F.to_pil_image(img)
         axs[0, i].imshow(np.asarray(img))
         axs[0, i].set(xticklabels=[], yticklabels=[], xticks=[], yticks=[])
+
+
+
+def get_loveDA(test_set=False, verbose=False):
+
+  """Downloads the loveDA dataset. If test_set == True, also downloads the test set.
+  If verbose == True activates verbose mode.
+  Returns a dictionary with the paths to the downloaded data."""
+
+  # ZIP files paths on Google Drive  
+  if test_set == True:
+    zip_files = {
+    "training": "/content/drive/My Drive/AML_project/Train.zip",
+    "validation": "/content/drive/My Drive/AML_project/Val.zip",
+    "test": "/content/drive/My Drive/AML_project/Test.zip"
+  }
+  else:
+    zip_files = {
+        "training": "/content/drive/My Drive/AML_project/Train.zip",
+        "validation": "/content/drive/My Drive/AML_project/Val.zip",
+    }
+
+  # Destination directory on Colab
+  extract_path = "/content/dataset"
+
+  # Create the directory if it doesn't exist
+  os.makedirs(extract_path, exist_ok=True)
+
+
+  extract_dir = f"{extract_path}"
+  # Check if the directory is non-empty (assumes extraction is complete if the folder has files)
+  if os.path.exists(extract_dir) and any(os.scandir(extract_dir)):
+    print(f"Skipping extraction for {name}, already extracted.")
+  else:
+    for name, zip_path in zip_files.items():
+        if verbose:
+          print(f"Extracting {name}...")
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            zip_ref.extractall(extract_dir)
+        if verbose:
+          print(f"{name} extracted!")
+
+    if verbose:
+      print("Extraction check completed!")
+
+  TRAINING_PATH_URBAN = os.path.join(extract_path, "Train", "Urban")
+  TRAINING_PATH_RURAL = os.path.join(extract_path, "Train", "Rural")
+  VAL_PATH_URBAN = os.path.join(extract_path, "Val", "Urban")
+  VAL_PATH_RURAL = os.path.join(extract_path, "Val", "Rural")
+
+  paths_dict = {
+    "training_urban": TRAINING_PATH_URBAN,
+    "training_rural": TRAINING_PATH_RURAL,
+    "validation_urban": VAL_PATH_URBAN,
+    "validation_rural": VAL_PATH_RURAL,
+  }
+
+  if test_set == True:
+    TEST_PATH_URBAN = os.path.join(extract_path, "Test", "Urban")
+    TEST_PATH_RURAL = os.path.join(extract_path, "Test", "Rural")
+    paths_dict["test_urban"] = TEST_PATH_URBAN
+    paths_dict["test_rural"] = TEST_PATH_RURAL
+
+  return paths_dict
