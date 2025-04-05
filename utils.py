@@ -132,7 +132,7 @@ def get_loveDA(test_set=False, verbose=False):
   extract_dir = f"{extract_path}"
   # Check if the directory is non-empty (assumes extraction is complete if the folder has files)
   if os.path.exists(extract_dir) and any(os.scandir(extract_dir)):
-    print(f"Skipping extraction for {name}, already extracted.")
+    print(f"Skipping extraction for the dataset, already extracted.")
   else:
     for name, zip_path in zip_files.items():
         if verbose:
