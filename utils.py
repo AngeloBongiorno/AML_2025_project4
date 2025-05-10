@@ -74,15 +74,20 @@ def validation_step(model: torch.nn.Module,
           # Converte le predizioni nei valori di classe più probabili
           preds = torch.argmax(outputs, dim=1)
 
+          valid_mask = (y_val >= 0) & (y_val < 7)
+
+          preds_flat = preds[valid_mask]
+          targets_flat = y_val[valid_mask]
+
           # Aggiorna il valore del mIoU
-          miou.update(preds, y_val)
+          miou.update(preds_flat, targets_flat)
 
           loss = loss_fn(outputs, y_val)
 
           val_loss += loss.item()
 
   avg_val_loss = val_loss / len(val_loader)
-  miou_score = miou.compute().item()    # Ottieni il valore scalare di mIoU
+  miou_score = miou.compute().mean()    # Ottieni il valore scalare di mIoU
 
   return avg_val_loss, miou_score
 
