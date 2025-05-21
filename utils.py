@@ -108,22 +108,28 @@ def show(imgs):
 
 
 
-def get_loveDA(test_set=False, verbose=False):
+def get_loveDA(test_set=False, verbose=False, train_cut=False):
 
   """Downloads the loveDA dataset. If test_set == True, also downloads the test set.
   If verbose == True activates verbose mode.
+  If train_cut == True, also returns the stylized version of the urban training set (urban -> rural).
   Returns a dictionary with the paths to the downloaded data."""
+
+  if train_cut:
+    training_set_path = "/content/drive/My Drive/AML_project/Train_CUT.zip"
+  else:
+    training_set_path = "/content/drive/My Drive/AML_project/Train.zip"
 
   # ZIP files paths on Google Drive  
   if test_set == True:
     zip_files = {
-    "training": "/content/drive/My Drive/AML_project/Train.zip",
+    "training": training_set_path,
     "validation": "/content/drive/My Drive/AML_project/Val.zip",
     "test": "/content/drive/My Drive/AML_project/Test.zip"
   }
   else:
     zip_files = {
-        "training": "/content/drive/My Drive/AML_project/Train.zip",
+        "training": training_set_path,
         "validation": "/content/drive/My Drive/AML_project/Val.zip",
     }
 
@@ -135,6 +141,8 @@ def get_loveDA(test_set=False, verbose=False):
 
 
   extract_dir = f"{extract_path}"
+
+  
   # Check if the directory is non-empty (assumes extraction is complete if the folder has files)
   if os.path.exists(extract_dir) and any(os.scandir(extract_dir)):
     print(f"Skipping extraction for {name}, already extracted.")
@@ -150,10 +158,16 @@ def get_loveDA(test_set=False, verbose=False):
     if verbose:
       print("Extraction check completed!")
 
+  if train_cut:
+    os.rename("/content/dataset/Train_CUT", "/content/dataset/Train")
+
+
   TRAINING_PATH_URBAN = os.path.join(extract_path, "Train", "Urban")
   TRAINING_PATH_RURAL = os.path.join(extract_path, "Train", "Rural")
   VAL_PATH_URBAN = os.path.join(extract_path, "Val", "Urban")
   VAL_PATH_RURAL = os.path.join(extract_path, "Val", "Rural")
+
+  
 
   paths_dict = {
     "training_urban": TRAINING_PATH_URBAN,
