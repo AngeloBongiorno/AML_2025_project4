@@ -115,10 +115,8 @@ def get_loveDA(test_set=False, verbose=False, train_cut=False):
   If train_cut == True, also returns the stylized version of the urban training set (urban -> rural).
   Returns a dictionary with the paths to the downloaded data."""
 
-  if train_cut:
-    training_set_path = "/content/drive/My Drive/AML_project/Train_CUT.zip"
-  else:
-    training_set_path = "/content/drive/My Drive/AML_project/Train.zip"
+  
+  training_set_path = "/content/drive/My Drive/AML_project/Train.zip"
 
   # ZIP files paths on Google Drive  
   if test_set == True:
@@ -132,6 +130,11 @@ def get_loveDA(test_set=False, verbose=False, train_cut=False):
         "training": training_set_path,
         "validation": "/content/drive/My Drive/AML_project/Val.zip",
     }
+
+  
+  if train_cut:
+    training_set_cut_path = "/content/drive/My Drive/AML_project/Train_CUT.zip"
+    zip_files["training_cut"] = training_set_cut_path
 
   # Destination directory on Colab
   extract_path = "/content/dataset"
@@ -157,15 +160,15 @@ def get_loveDA(test_set=False, verbose=False, train_cut=False):
 
     if verbose:
       print("Extraction check completed!")
-
-  if train_cut:
-    os.rename("/content/dataset/Train_CUT", "/content/dataset/Train")
-
+      
 
   TRAINING_PATH_URBAN = os.path.join(extract_path, "Train", "Urban")
   TRAINING_PATH_RURAL = os.path.join(extract_path, "Train", "Rural")
   VAL_PATH_URBAN = os.path.join(extract_path, "Val", "Urban")
   VAL_PATH_RURAL = os.path.join(extract_path, "Val", "Rural")
+
+  
+  
 
   
 
@@ -175,6 +178,12 @@ def get_loveDA(test_set=False, verbose=False, train_cut=False):
     "validation_urban": VAL_PATH_URBAN,
     "validation_rural": VAL_PATH_RURAL,
   }
+
+
+  if train_cut:
+    TRAINING_PATH_URBAN_CUT = os.path.join(extract_path, "Train_CUT", "Urban")
+    paths_dict["training_urban_cut"] = TRAINING_PATH_URBAN_CUT
+  
 
   if test_set == True:
     TEST_PATH_URBAN = os.path.join(extract_path, "Test", "Urban")
