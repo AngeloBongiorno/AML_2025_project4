@@ -5,3 +5,5 @@ Components:
 - Angelo Bongiorno: s331164
 - Matteo Bollo: s332129
 - Silvestri Vito: s326492
+
+The final delivery is in the main branch
